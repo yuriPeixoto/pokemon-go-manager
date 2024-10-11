@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -44,5 +45,28 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // Relationships
+    public function favoritePokemons(): BelongsToMany
+    {
+        return $this->belongsToMany(Pokemon::class, 'favorite_pokemons')->withTimestamps();
+    }
+
+    // Helpers
+    public function toggleFavorite(Pokemon $pokemon): void
+    {
+        $this->favoritePokemons()->toggle($pokemon);
+    }
+
+    public function hasFavorited(Pokemon $pokemon): bool
+    {
+        return $this->favoritePokemons()->where('pokemon_id', $pokemon->id)->exists();
+    }
+
+    // Scopes
+    public function scopeWithFavoritePokemonCount($query)
+    {
+        return $query->withCount('favoritePokemons');
     }
 }
