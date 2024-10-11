@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('favorite_pokemons', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('pokemon_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('pokemon_id')->constrained('pokemons')->onDelete('cascade');
             $table->timestamps();
             $table->primary(['user_id', 'pokemon_id']);
         });
